@@ -53,34 +53,47 @@ int main(int argc, char *argv[]){
       //so filenames will be filename1, filename2, etc. It will save to 'filename' variable the argv[1]: whatever you type into command-line
       //when run the program (i.e. if typed 'test.exe out 10', it will make filename be out.
 
-      //   To be filled inn during lab session
+      //   Declare
       double h = 1.0/((double) n);  //define h=step size. 1.0 to make sure it returns a double. write: ((double) n) to make sure n is double also.
       double hh = h*h;              //define h^2 as hh
       // need to have flexible (dynamic memory allocation). for n points we have n+1 elements (arrays start from 0)
-      double *d = new double[n+1];  //array  for diagonal matrix elements
-      //double *e = new double[n+1];  //array for non-diagonal matrix elements, not needed for the special case
+      double *diagonal = new double[n+1];  //array  for diagonal matrix elements
+      double *a = new double[n+1];  //array for non-diagonal matrix elements, not needed for the special case
+      double *c = new double[n+1];
       double *f = new double[n+1];  //array for right hand side (then known fnc f(x))
       double *x = new double[n+1];  //array for x-values
-      double *u = new double[n+1];  //array for solution
+      double *v = new double[n+1];  //array for solution
+      double adiag_ratio;
 
       //Dirichlet boundary  conditions
-      u[0] = u[n] = 0.0;
+      v[0] = v[n] = 0.0;
       //Special case, tridiagonal matrix
-      d[0] = d[n] = 2.0;
+      diagonal[0] = diagonal[n] = 2.0;
 
       for (int i = 0; i <=n; i++){
           x[i] = i*h;
           f[i] = hh*ff(i*h);
       }
-      for (int i = 1; i<n; i++) d[i] = (i+1.0)/((double) i);  //this is array d = (i+1)/i which saves flaoting pt operations by precalculate
+      //for (int i = 1; i<n; i++) diagonal[i] = (i+1.0)/((double) i);  //this is array d = (i+1)/i which saves flaoting pt operations by precalculate
+
+      for (int i = 1; i<n; i++) {
+          diagonal[i] = 2.0;
+          a[i] = -1;
+          c[i] = -1;
+      }
+
 
       //Forward substition
-      for (int i = 2; i <n; i++) f[i] = f[i] + f[i-1]/d[i-1];
+      for (int i = 2; i <n; i++) {
+          adiag_ratio = a[i-1]/diagonal[i-1];
+          diagonal[i] = diagonal[i] - adiag_ratio*c[i-1];
+          f[i] = f[i] - adiag_ratio*f[i-1];
+      }
       //for (int i = 2; i <n; i++) f[i] += f[i-1]/d[i-1];    // += is short way to write the above line and save floating pt operations
 
       //Backward substitution
-      u[n-1] = f[n-1]/d[n-1]; //define endpoint
-      for (int i = n-1; i >0; i--) u[i] = (f[i]+u[i+1])/d[i];
+      v[n-1] = f[n-1]/diagonal[n-1]; //define endpoint
+      for (int i = n-2; i >0; i--) v[i] = (f[i]-v[i+1]*c[i])/diagonal[i];
 
       ofile.open(fileout);
       ofile << setiosflags(ios::showpoint | ios::uppercase); //sets to write i.e. 10^6 as E6
@@ -90,14 +103,14 @@ int main(int argc, char *argv[]){
       //     ofile << "       x:             approx:          exact:       relative error" << endl;
       for (int i = 1; i < n;i++) {
 	double xval = x[i];
-         double RelativeError = fabs((exact(xval)-u[i])/exact(xval)); //fabs is absolute value
+         double RelativeError = fabs((exact(xval)-v[i])/exact(xval)); //fabs is absolute value
          ofile << setw(15) << setprecision(8) << xval;  //setprecision(8) sets that use 8 sigfigs
-         ofile << setw(15) << setprecision(8) << u[i];
+         ofile << setw(15) << setprecision(8) << v[i];
          ofile << setw(15) << setprecision(8) << exact(xval); //is analytical solution defined at top
          ofile << setw(15) << setprecision(8) << log10(RelativeError) << endl;
       }
       ofile.close();
-      delete [] x; delete [] d; delete [] f; delete [] u; //memory that was occupied by these arrays is now freed
+      delete [] x; delete [] diagonal; delete [] f; delete [] v; delete[] a; delete[] c; //memory that was occupied by these arrays is now freed
 
     }
 
