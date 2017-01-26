@@ -1,0 +1,30 @@
+How to compile C++ program through windows command line using visual studio as the compiler:
+
+1. Open developer command prompt VS2015
+2. Make new directory (i.e. md c:\program1) or go to existing directory (i.e. cd c:\program2 or ). Note: you can't make a directory in the visual studio
+folder which the developer defaults to as current directory.
+3. To create new c++ source file or open existing c++ source file in current directory: notepad filename.cpp  
+   This opens notepad with either new or existing file. Can make edits and when save make sure is in desired place.d
+3.5 Can type: dir   to check what files are in current directory. Should see your cpp file.
+4. To compile: cl /EHsc filename.cpp             (cl NOT c1!!). EHsc instructs compiler to enable exception handling.
+This will save in your directory and object file (.obj) and executable (.exe) with the same name as 'filename' you picked.
+
+To compile several source files at once (into 1 executable) : cl /EHsc file1.cpp file2.cpp file3.cpp      
+ Compiler will use the first filename as name for executable. 
+To change the executable name use:  cl /EHsc file1.cpp file2.cpp file3.cpp /link /out:program1.exe   This will rename exe to 'program1'
+
+
+Microsoft documentation recomends using either /W3 or /W4 warning level to catch mistakes automatically (not sure what kind of things it catches)
+Then would compile it using: cl /W4 /EHsc file1.cpp file2.cpp file3.cpp /link /out:program1.exe               (for multiple source files)
+  
+5. Now when in the correct directory, you can just type the .exe name (w/o typing '.exe') and the program runs. Can do this either in the 
+developer command prompt or regular windows command prompt.
+
+
+6. If copy executable files along with object and source files to different directory, they still run fine.
+
+Press Ctrl C to  abort execution (i.e. if get infinite loop or realize something is wrong)
+
+--------------
+
+notepad filename     //opens the notepad .txt file with results.

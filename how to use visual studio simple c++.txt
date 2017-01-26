@@ -1,0 +1,15 @@
+How to create simple c++ program in visual studio GUI and run it:
+
+
+1. Open visual studio, go to file-->new --> project.
+2. Select Win32 Console application (under Visual C++ section).
+3. Choose a name for program and also can change directory. Click ok.
+4. Now the Win32 application wizard will show up. Click next.
+5. Select "empty project" checkbox and don't change anything else. Click finish.
+6. Now on right side of screen, click "solution explorer tab". Right click on "source" -->add --> choose new or existing file. New opens
+blank page where can type a program. Existing allows to select existing program. (needs to be .cpp extension).
+7. Make any edits to program you  want. Save the program.
+8. In main menu bar, go to "build" -> build solution.
+9. In main menu bar go to "debug" --> debug without compiling.
+10. Now a command window will pop up and it will display any cout staments you have and you can type things that go to cin statements, etc.
+11. Program runs.
