@@ -1,13 +1,15 @@
-//Partb of Program1
+//Partb of Program1. Computation time is calculated for each value of n (10^n = # of mesh points) seperately.
 //Include statements for header files
 #include <iostream>
 #include <fstream>
 #include <iomanip> 
 #include <cmath>    //  Mathematical functions like sin, cos etc
 #include <string>   //  useful library to operate on characters
+#include <chrono>  //for high resolution clock
 
 // use namespace std for output and input so don't need to write std:: in front of commands like cout, cin
 using namespace std;
+using namespace std::chrono; //for high res clock
 
 // object for output files, for input files use ifstream
 ofstream ofile;  //allows to work with output files in compact way
@@ -59,6 +61,9 @@ int main(int argc, char *argv[]){
       double *x = new double[n+1];  //array for x-values
       double *v = new double[n+1];  //array for solution
 
+      //start clock timer
+      high_resolution_clock::time_point start = high_resolution_clock::now();
+
       //Dirichlet boundary  conditions
       v[0] = v[n] = 0.0;
 
@@ -85,6 +90,11 @@ int main(int argc, char *argv[]){
       //Backward substitution
       v[n-1] = f[n-1]/diagonal[n-1]; //define endpoint
       for (int i = n-2; i >0; i--) v[i] = (f[i]-v[i+1]*c[i])/diagonal[i];
+
+      //stop clock timer and output time duration
+      high_resolution_clock::time_point finish = high_resolution_clock::now();
+      duration<double> time = duration_cast<duration<double>>(finish-start);
+      cout << "time = " << time.count() << endl;
 
       //Setup output file
       ofile.open(fileout);

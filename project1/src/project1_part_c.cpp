@@ -5,9 +5,11 @@
 #include <iomanip> 
 #include <cmath>    //  Mathematical functions like sin, cos etc
 #include <string>   //  useful library to operate on characters
+#include <chrono>  //for high resolution clock
 
 // use namespace for output and input so don't need to write std:: in front of commands like cout, cin
 using namespace std;
+using namespace std::chrono; //for high res clock
 
 // object for output files, for input files use ifstream
 ofstream ofile;  //allows to work with output files in compact way
@@ -58,6 +60,9 @@ int main(int argc, char *argv[]){
       double *x = new double[n+1];   //array for x-values
       double *u = new double[n+1];   //array for solution
 
+      //start clock timer
+      high_resolution_clock::time_point start = high_resolution_clock::now();
+
       //Dirichlet boundary  conditions
       u[0] = u[n] = 0.0;
       //Special case, tridiagonal matrix
@@ -77,6 +82,11 @@ int main(int argc, char *argv[]){
       //Backward substitution
       u[n-1] = f[n-1]/d[n-1]; //define endpoint
       for (int i = n-1; i >0; i--) u[i] = (f[i]+u[i+1])/d[i];
+
+      //stop clock timer and output time duration
+      high_resolution_clock::time_point finish = high_resolution_clock::now();
+      duration<double> time = duration_cast<duration<double>>(finish-start);
+      cout << "time = " << time.count() << endl;
 
       //Setup output file
       ofile.open(fileout);
